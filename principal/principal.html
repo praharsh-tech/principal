@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Principal Dashboard | NIT Polytechnic</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
+    <div>
+      <h1 class="text-2xl font-semibold">Principal Dashboard</h1>
+      <p id="principalName" class="text-sm opacity-90"></p>
+    </div>
+
+    <button
+      id="logoutBtn"
+      class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md">
+      Logout
+    </button>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="p-6 max-w-5xl mx-auto space-y-8">
+
+    <!-- ===== ASSIGN TASK FORM ===== -->
+    <section class="bg-white p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-semibold mb-6 text-blue-700">
+        Assign New Task
+      </h2>
+
+      <!-- Task Title -->
+      <div class="mb-4">
+        <label class="block font-medium mb-2">Task Title</label>
+        <input
+          id="taskTitle"
+          type="text"
+          placeholder="Enter task title"
+          class="border w-full p-3 rounded-md focus:outline-blue-500"
+        />
+      </div>
+
+      <!-- Task Description -->
+      <div class="mb-4">
+        <label class="block font-medium mb-2">Task Description</label>
+        <textarea
+          id="taskDesc"
+          placeholder="Enter detailed description"
+          class="border w-full p-3 rounded-md focus:outline-blue-500"></textarea>
+      </div>
+
+      <!-- Nature of Task -->
+      <div class="mb-4">
+        <label class="block font-medium mb-2">Nature of Task</label>
+        <select
+          id="taskNature"
+          class="border w-full p-3 rounded-md focus:outline-blue-500">
+          <option value="">-- Select Nature --</option>
+          <option value="Important">Important</option>
+          <option value="Most Important">Most Important</option>
+          <option value="Needs to Complete">Needs to Complete</option>
+        </select>
+      </div>
+
+      <!-- Deadline -->
+      <div class="mb-4">
+        <label class="block font-medium mb-2">Deadline</label>
+        <input
+          type="date"
+          id="taskDeadline"
+          class="border w-full p-3 rounded-md focus:outline-blue-500"
+        />
+      </div>
+
+      <!-- Assign To -->
+      <div class="mb-4">
+        <label class="block font-medium mb-2">Assign To</label>
+        <select
+          id="assignTo"
+          multiple
+          class="border w-full p-3 rounded-md focus:outline-blue-500">
+          <!-- options will be loaded from userdb.js using principal.js -->
+        </select>
+        <p class="text-xs text-gray-500 mt-1">
+          Hold CTRL (or CMD) to select multiple users
+        </p>
+      </div>
+
+      <!-- Support People -->
+      <div class="mb-4">
+        <label class="block font-medium mb-2">Support People</label>
+        <input
+          id="supportPeople"
+          type="text"
+          placeholder="e.g. Admin Staff, Lab Assistant"
+          class="border w-full p-3 rounded-md focus:outline-blue-500"
+        />
+      </div>
+
+      <!-- Submit -->
+      <button
+        id="addTaskBtn"
+        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-md w-full font-medium">
+        Add Task
+      </button>
+    </section>
+
+    <!-- ===== FILTERS ===== -->
+    <section class="flex flex-wrap gap-4 items-center">
+      <input
+        id="searchTask"
+        placeholder="Search by title or description..."
+        class="border p-3 rounded-md flex-1 focus:outline-blue-500"
+      />
+
+      <select
+        id="filterStatus"
+        class="border p-3 rounded-md">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Processing">Processing</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <button
+        id="applyFilterBtn"
+        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md">
+        Apply Filters
+      </button>
+    </section>
+
+    <!-- ===== TASK LIST ===== -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-3 text-blue-700">
+        All Tasks
+      </h2>
+
+      <div id="taskList" class="space-y-4">
+        <!-- Tasks will be rendered here using principal.js -->
+      </div>
+    </section>
+
+    <!-- ===== HOD PERFORMANCE SECTION ===== -->
+<section class="mt-10">
+  <h2 class="text-2xl font-semibold text-blue-700 mb-4">
+    HOD Performance Overview
+  </h2>
+
+  <div
+    id="hodPerformance"
+    class="grid gap-4 md:grid-cols-2">
+    <!-- HOD cards loaded by JS -->
+  </div>
+</section>
+
+
+  </main>
+
+  <!-- ================= SCRIPT ================= -->
+  <!-- IMPORTANT: module is required -->
+  <script type="module" src="principal.js"></script>
+
+</body>
+</html>
