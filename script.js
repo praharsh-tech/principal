@@ -47,23 +47,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // Redirect based on role
     switch (user.role) {
       case "principal":
-        window.location.href = "../principal/principal.html";
+        window.location.href = "./principal/principal.html";
         break;
 
       case "hod":
-        window.location.href = "../HOD/HOD.html";
+        window.location.href = "./HOD/HOD.html";
         break;
 
       case "faculty":
-        window.location.href = "../faculty/faculty.html";
+        window.location.href = "./faculty/faculty.html";
         break;
 
       case "accounts":
-        window.location.href = "../dashboards/account.html";
+        window.location.href = "./Dashboards/account.html";
         break;
 
       case "scholarship":
-        window.location.href = "../dashboards/scholarshipdept.html";
+        window.location.href = "./Dashboards/scholarshipdept.html";
         break;
 
       default:
