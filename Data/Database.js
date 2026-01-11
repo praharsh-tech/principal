@@ -57,7 +57,7 @@ export const users = [
     name: "HOD Computer",
     username: "hod_cs",
     password: "1234",
-    email: "hodcs@college.edu",
+    email: "praharshramteke9@gmail.com",
     phone: "9999990101",
     dept: "Computer",
     role: "hod",

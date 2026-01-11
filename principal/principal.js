@@ -1,5 +1,6 @@
 import { users } from "../Data/Database.js";
 
+
 /************************************************
  🔐 PAGE PROTECTION + LOAD PRINCIPAL INFO
 ************************************************/
@@ -41,7 +42,7 @@ function saveTasks(tasks) {
 }
 
 /************************************************
- ➕ ADD NEW TASK
+ ➕ ADD NEW TASK + EMAILJS (SAFE WAY)
 ************************************************/
 document.getElementById("addTaskBtn").addEventListener("click", () => {
   const title = document.getElementById("taskTitle").value.trim();
@@ -76,6 +77,35 @@ document.getElementById("addTaskBtn").addEventListener("click", () => {
 
   tasks.push(newTask);
   saveTasks(tasks);
+
+  /************************************************
+   📧 EMAILJS COMPONENT CALL (GLOBAL SAFE)
+  ************************************************/
+  assignedTo.forEach((username) => {
+    const user = users.find((u) => u.username === username);
+    if (!user || !user.email) return;
+    
+console.log("Assigned username:", username);
+console.log("Resolved user:", user);
+console.log("Email value:", user?.email);
+
+    // IMPORTANT: window.emailjs (module-safe)
+    window.emailjs
+      .send("service_s56fino", "template_t43at3r", {
+        to_name: user.name,
+        to_email: user.email,
+        task_title: title,
+        task_nature: nature,
+        task_deadline: deadline,
+        from_name: loggedInUser.name
+      })
+      .then(() => {
+        console.log("Email sent to:", user.email);
+      })
+      .catch((err) => {
+        console.error("Email failed:", err);
+      });
+  });
 
   clearForm();
   renderTasks(tasks);
@@ -155,25 +185,19 @@ document
     renderTasks(tasks);
   });
 
-
-   /************************************************
+/************************************************
  📊 HOD PERFORMANCE ANALYTICS
 ************************************************/
 function loadHodPerformance() {
-
-    
   const hodContainer = document.getElementById("hodPerformance");
   if (!hodContainer) return;
 
   const tasks = getTasks();
-
-  // get all HODs
   const hods = users.filter((u) => u.role === "hod");
 
   hodContainer.innerHTML = "";
 
   hods.forEach((hod) => {
-    // tasks assigned to this HOD
     const hodTasks = tasks.filter((t) =>
       t.assignedTo.includes(hod.username)
     );
@@ -183,7 +207,6 @@ function loadHodPerformance() {
       (t) => t.status === "Completed"
     ).length;
 
-    // determine performance
     let performance = "Excellent";
     let color = "green";
 
@@ -198,56 +221,43 @@ function loadHodPerformance() {
       color = "yellow";
     }
 
- const card = document.createElement("div");
-card.className =
-  "bg-white p-5 rounded-xl shadow relative flex gap-4";
+    const card = document.createElement("div");
+    card.className =
+      "bg-white p-5 rounded-xl shadow relative flex gap-4";
 
-card.innerHTML = `
-  <!-- HOD PHOTO -->
-  <img
-    src="${hod.pfp || 'https://via.placeholder.com/60'}"
-    alt="HOD Photo"
-   class="w-20 h-20 rounded-md object-cover absolute top-4 right-4 border"
+    card.innerHTML = `
+      <img
+        src="${hod.pfp || "https://via.placeholder.com/60"}"
+        class="w-20 h-20 rounded-md object-cover absolute top-4 right-4 border"
+      />
 
+      <div>
+        <h3 class="text-lg font-semibold text-blue-700">${hod.name}</h3>
+        <p class="text-sm text-gray-600">Department: ${hod.dept}</p>
 
-  />
+        <div class="mt-3 text-sm">
+          <p><strong>Total Tasks:</strong> ${total}</p>
+          <p><strong>Completed:</strong> ${completed}</p>
+        </div>
 
-  <!-- HOD INFO -->
-  <div>
-    <h3 class="text-lg font-semibold text-blue-700">
-      ${hod.name}
-    </h3>
-
-    <p class="text-sm text-gray-600">
-      Department: ${hod.dept}
-    </p>
-
-    <div class="mt-3 text-sm">
-      <p><strong>Total Tasks:</strong> ${total}</p>
-      <p><strong>Completed:</strong> ${completed}</p>
-    </div>
-
-    <span
-      class="inline-block mt-3 px-3 py-1 rounded-full text-sm
-      ${
-        color === "green"
-          ? "bg-green-100 text-green-700"
-          : color === "yellow"
-          ? "bg-yellow-100 text-yellow-700"
-          : color === "red"
-          ? "bg-red-100 text-red-700"
-          : "bg-gray-200 text-gray-700"
-      }">
-      ${performance}
-    </span>
-  </div>
-`;
-
+        <span class="inline-block mt-3 px-3 py-1 rounded-full text-sm
+          ${
+            color === "green"
+              ? "bg-green-100 text-green-700"
+              : color === "yellow"
+              ? "bg-yellow-100 text-yellow-700"
+              : color === "red"
+              ? "bg-red-100 text-red-700"
+              : "bg-gray-200 text-gray-700"
+          }">
+          ${performance}
+        </span>
+      </div>
+    `;
 
     hodContainer.appendChild(card);
   });
 }
-
 
 /************************************************
  🚪 LOGOUT
