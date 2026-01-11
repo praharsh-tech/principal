@@ -9,7 +9,7 @@ export const users = [
   // =====================
   {
     id: 1,
-    name: "Dr. Ramesh Kulkarni",
+    name: "gajanan pothbhare",
     username: "principal",
     password: "1234",
     email: "principal@college.edu",
