@@ -1,182 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Principal Dashboard | NIT Polytechnic</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+<title>Principal Dashboard | NIT Polytechnic</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+(function(){
+emailjs.init({
+publicKey:"I8R-RN33kP7UQbaw9"
+});
+})();
 </script>
-<script type="text/javascript">
-   (function(){
-      emailjs.init({
-        publicKey: "I8R-RN33kP7UQbaw9",
-      });
-   })();
-</script>
+
 </head>
 
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen">
 
-  <!-- ================= NAVBAR ================= -->
-  <header class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
-    <div>
-      <h1 class="text-2xl font-semibold">Principal Dashboard</h1>
-      <p id="principalName" class="text-sm opacity-90"></p>
-    </div>
+<!-- ================= NAVBAR ================= -->
 
-    <button
-      id="logoutBtn"
-      class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md">
-      Logout
-    </button>
-  </header>
+<header class="bg-blue-700 text-white px-8 py-4 flex justify-between items-center shadow-lg">
 
-  <!-- ================= MAIN ================= -->
-  <main class="p-6 max-w-5xl mx-auto space-y-8">
+<div>
+<h1 class="text-2xl font-bold tracking-wide">Principal Dashboard</h1>
+<p id="principalName" class="text-sm opacity-90"></p>
+</div>
 
-    <!-- ===== ASSIGN TASK FORM ===== -->
-    <section class="bg-white p-6 rounded-xl shadow-lg">
-      <h2 class="text-2xl font-semibold mb-6 text-blue-700">
-        Assign New Task
-      </h2>
+<button
+id="logoutBtn"
+class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md shadow">
+Logout
+</button>
 
-      <!-- Task Title -->
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Task Title</label>
-        <input
-          id="taskTitle"
-          type="text"
-          placeholder="Enter task title"
-          class="border w-full p-3 rounded-md focus:outline-blue-500"
-        />
-      </div>
+</header>
 
-      <!-- Task Description -->
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Task Description</label>
-        <textarea
-          id="taskDesc"
-          placeholder="Enter detailed description"
-          class="border w-full p-3 rounded-md focus:outline-blue-500"></textarea>
-      </div>
+<!-- ================= MAIN ================= -->
 
-      <!-- Nature of Task -->
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Nature of Task</label>
-        <select
-          id="taskNature"
-          class="border w-full p-3 rounded-md focus:outline-blue-500">
-          <option value="">-- Select Nature --</option>
-          <option value="Important">Important</option>
-          <option value="Most Important">Most Important</option>
-          <option value="Needs to Complete">Needs to Complete</option>
-        </select>
-      </div>
+<main class="p-8 max-w-6xl mx-auto space-y-10">
 
-      <!-- Deadline -->
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Deadline</label>
-        <input
-          type="date"
-          id="taskDeadline"
-          class="border w-full p-3 rounded-md focus:outline-blue-500"
-        />
-      </div>
+<!-- ================= ASSIGN TASK ================= -->
 
-      <!-- Assign To -->
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Assign To</label>
-        <select
-          id="assignTo"
-          multiple
-          class="border w-full p-3 rounded-md focus:outline-blue-500">
-          <!-- options will be loaded from userdb.js using principal.js -->
-        </select>
-        <p class="text-xs text-gray-500 mt-1">
-          Hold CTRL (or CMD) to select multiple users
-        </p>
-      </div>
+<section class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
 
-      <!-- Support People -->
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Support People</label>
-        <input
-          id="supportPeople"
-          type="text"
-          placeholder="e.g. Admin Staff, Lab Assistant"
-          class="border w-full p-3 rounded-md focus:outline-blue-500"
-        />
-      </div>
+<h2 class="text-2xl font-semibold mb-6 text-blue-700">
+Assign New Task
+</h2>
 
-      <!-- Submit -->
-      <button
-        id="addTaskBtn"
-        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-md w-full font-medium">
-        Add Task
-      </button>
-    </section>
+<div class="grid md:grid-cols-2 gap-6">
 
-    <!-- ===== FILTERS ===== -->
-    <section class="flex flex-wrap gap-4 items-center">
-      <input
-        id="searchTask"
-        placeholder="Search by title or description..."
-        class="border p-3 rounded-md flex-1 focus:outline-blue-500"
-      />
+<div>
+<label class="block font-medium mb-2">Task Title</label>
 
-      <select
-        id="filterStatus"
-        class="border p-3 rounded-md">
-        <option value="">All Status</option>
-        <option value="Pending">Pending</option>
-        <option value="Processing">Processing</option>
-        <option value="Completed">Completed</option>
-      </select>
+<input
+id="taskTitle"
+type="text"
+placeholder="Enter task title"
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500"
+/>
+</div>
 
-      <button
-        id="applyFilterBtn"
-        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md">
-        Apply Filters
-      </button>
-    </section>
+<div>
+<label class="block font-medium mb-2">Deadline</label>
 
-    <!-- ===== TASK LIST ===== -->
-    <section>
-      <h2 class="text-2xl font-semibold mb-3 text-blue-700">
-        All Tasks
-      </h2>
+<input
+type="date"
+id="taskDeadline"
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500"
+/>
+</div>
 
-      <div id="taskList" class="space-y-4">
-        <!-- Tasks will be rendered here using principal.js -->
-      </div>
-    </section>
+</div>
 
-    <!-- ===== HOD PERFORMANCE SECTION ===== -->
-<section class="mt-10">
-  <h2 class="text-2xl font-semibold text-blue-700 mb-4">
-    HOD Performance Overview
-  </h2>
+<div class="mt-5">
 
-  <div
-    id="hodPerformance"
-    class="grid gap-4 md:grid-cols-2">
-    <!-- HOD cards loaded by JS -->
-  </div>
+<label class="block font-medium mb-2">Task Description</label>
+
+<textarea
+id="taskDesc"
+placeholder="Enter detailed description"
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+
+</div>
+
+<div class="mt-5">
+
+<label class="block font-medium mb-2">Nature of Task</label>
+
+<select
+id="taskNature"
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500">
+
+<option value="">Select Nature</option>
+<option value="Important">Important</option>
+<option value="Most Important">Most Important</option>
+<option value="Needs to Complete">Needs to Complete</option>
+
+</select>
+
+</div>
+
+<input
+id="userSearch"
+type="text"
+placeholder="Search HOD / Faculty / Others"
+class="border w-full p-3 rounded-md mt-5 focus:ring-2 focus:ring-blue-500"
+/>
+
+<div class="mt-4">
+
+<label class="block font-medium mb-2">Assign To</label>
+
+<select
+id="assignTo"
+multiple
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500">
+</select>
+
+<p class="text-xs text-gray-500 mt-1">
+Hold CTRL (or CMD) to select multiple users
+</p>
+
+</div>
+
+<div class="mt-5">
+
+<label class="block font-medium mb-2">Upload Attachment</label>
+
+<input
+type="file"
+id="taskFile"
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500"
+/>
+
+</div>
+
+<div class="mt-5">
+
+<label class="block font-medium mb-2">Support People</label>
+
+<input
+id="supportPeople"
+type="text"
+placeholder="Admin Staff, Lab Assistant"
+class="border w-full p-3 rounded-md focus:ring-2 focus:ring-blue-500"
+/>
+
+</div>
+
+<button
+id="addTaskBtn"
+class="mt-6 bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-md w-full font-medium shadow">
+Add Task
+</button>
+
 </section>
 
+<!-- ================= FILTER SECTION ================= -->
 
-  </main>
+<section class="flex flex-wrap gap-4 items-center bg-white p-5 rounded-xl shadow">
 
+<input
+id="searchTask"
+placeholder="Search tasks..."
+class="border p-3 rounded-md flex-1 focus:ring-2 focus:ring-blue-500"
+/>
 
+<select
+id="filterStatus"
+class="border p-3 rounded-md">
 
+<option value="">All Status</option>
+<option value="Pending">Pending</option>
+<option value="Processing">Processing</option>
+<option value="Completed">Completed</option>
+
+</select>
+
+<button
+id="applyFilterBtn"
+class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md shadow">
+Apply Filters
+</button>
+
+</section>
+
+<!-- ================= TASK LIST ================= -->
+
+<section>
+
+<h2 class="text-2xl font-semibold mb-4 text-blue-700">
+All Tasks
+</h2>
+
+<div id="taskList" class="space-y-4"></div>
+
+</section>
+
+<!-- ================= HOD PERFORMANCE ================= -->
+
+<section>
+
+<h2 class="text-2xl font-semibold text-blue-700 mb-4">
+HOD Performance Overview
+</h2>
+
+<div
+id="hodPerformance"
+class="grid md:grid-cols-2 gap-6">
+
+</div>
+
+</section>
+
+<!-- ================= FACULTY PERFORMANCE ================= -->
+
+<section>
+
+<h2 class="text-2xl font-semibold text-blue-700 mb-4">
+Faculty Performance Overview
+</h2>
+
+<div
+id="facultyPerformance"
+class="grid md:grid-cols-2 gap-6">
+
+</div>
+
+</section>
+
+</main>
 
 <script type="module" src="principal.js"></script>
-
-  
 
 </body>
 </html>
