@@ -1,7 +1,7 @@
 import { users } from "../Data/Database.js";
 
 /************************************************
- 🔐 PAGE PROTECTION
+PAGE PROTECTION
 ************************************************/
 const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
@@ -10,7 +10,7 @@ if (!loggedInUser || loggedInUser.role !== "hod") {
 }
 
 /************************************************
- 👤 LOAD HOD PROFILE
+LOAD HOD PROFILE
 ************************************************/
 document.getElementById("hodHeaderInfo").textContent =
 `${loggedInUser.name} (${loggedInUser.dept})`;
@@ -24,7 +24,7 @@ document.getElementById("hodImage").src =
 loggedInUser.pfp || "https://via.placeholder.com/150";
 
 /************************************************
- 🧑‍🏫 LOAD FACULTY LIST
+LOAD FACULTY DROPDOWN
 ************************************************/
 const facultySelect = document.getElementById("assignToSelect");
 
@@ -42,7 +42,7 @@ facultySelect.appendChild(option);
 });
 
 /************************************************
- 📦 TASK STORAGE
+TASK STORAGE
 ************************************************/
 function getTasks(){
 return JSON.parse(localStorage.getItem("tasks")) || [];
@@ -53,7 +53,7 @@ localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 /************************************************
- 📋 LOAD TASKS FOR THIS HOD
+LOAD HOD TASKS
 ************************************************/
 function loadHodTasks(){
 
@@ -68,7 +68,7 @@ renderTasks(hodTasks);
 }
 
 /************************************************
- 🎨 RENDER TASKS
+RENDER TASKS
 ************************************************/
 function renderTasks(tasks){
 
@@ -112,23 +112,42 @@ Download Attachment
 Update Status
 </label>
 
-<select
-class="hodStatusSelect border rounded-md px-3 py-1 mt-1 w-full"
+<select class="hodStatusSelect border rounded-md px-3 py-1 mt-1 w-full"
 data-id="${task.id}">
 
-<option value="Pending" ${task.status==="Pending"?"selected":""}>
-Pending
-</option>
-
-<option value="Processing" ${task.status==="Processing"?"selected":""}>
-Processing
-</option>
-
-<option value="Completed" ${task.status==="Completed"?"selected":""}>
-Completed
-</option>
+<option value="Pending" ${task.status==="Pending"?"selected":""}>Pending</option>
+<option value="Processing" ${task.status==="Processing"?"selected":""}>Processing</option>
+<option value="Completed" ${task.status==="Completed"?"selected":""}>Completed</option>
 
 </select>
+
+<label class="block text-sm font-medium mt-3">
+Reply to Principal
+</label>
+
+<textarea class="hodReply border rounded-md px-3 py-2 w-full mt-1"
+data-id="${task.id}"
+placeholder="Write response...">${task.hodReply || ""}</textarea>
+
+<label class="block text-sm font-medium mt-3">
+Upload Response File
+</label>
+
+<input type="file"
+class="hodFile border rounded-md px-3 py-1 w-full mt-1"
+data-id="${task.id}" />
+
+<button class="saveReplyBtn bg-blue-600 text-white px-3 py-1 rounded mt-3"
+data-id="${task.id}">
+Save Response
+</button>
+
+${task.hodFile ? `
+<a href="${task.hodFile}" download
+class="text-green-600 underline text-sm block mt-2">
+Download Uploaded Response
+</a>
+` : ""}
 
 `;
 
@@ -137,32 +156,27 @@ taskBox.appendChild(div);
 });
 
 attachStatusUpdate();
+attachReplySave();
 
 }
 
 /************************************************
- 🔄 STATUS UPDATE
+STATUS UPDATE
 ************************************************/
 function attachStatusUpdate(){
 
-const selects = document.querySelectorAll(".hodStatusSelect");
-
-selects.forEach(select => {
+document.querySelectorAll(".hodStatusSelect").forEach(select=>{
 
 select.addEventListener("change",(e)=>{
 
 const taskId = Number(e.target.dataset.id);
-
-const newStatus = e.target.value;
-
 const tasks = getTasks();
 
-const task = tasks.find(t => t.id === taskId);
+const task = tasks.find(t=>t.id === taskId);
 
 if(task){
 
-task.status = newStatus;
-
+task.status = e.target.value;
 task.updatedAt = new Date().toLocaleString();
 
 saveTasks(tasks);
@@ -176,28 +190,79 @@ saveTasks(tasks);
 }
 
 /************************************************
- ➕ ASSIGN TASK TO FACULTY
+SAVE HOD RESPONSE
+************************************************/
+function attachReplySave(){
+
+document.querySelectorAll(".saveReplyBtn").forEach(btn=>{
+
+btn.addEventListener("click",(e)=>{
+
+const taskId = Number(e.target.dataset.id);
+
+const tasks = getTasks();
+const task = tasks.find(t=>t.id === taskId);
+
+if(!task) return;
+
+const replyInput =
+document.querySelector(`.hodReply[data-id="${taskId}"]`);
+
+const fileInput =
+document.querySelector(`.hodFile[data-id="${taskId}"]`);
+
+task.hodReply = replyInput.value;
+
+const file = fileInput.files[0];
+
+if(file){
+
+const reader = new FileReader();
+
+reader.onload = function(){
+
+task.hodFile = reader.result;
+
+saveTasks(tasks);
+
+loadHodTasks();
+
+};
+
+reader.readAsDataURL(file);
+
+}else{
+
+saveTasks(tasks);
+
+alert("Response saved");
+
+}
+
+});
+
+});
+
+}
+
+/************************************************
+ASSIGN TASK TO FACULTY
 ************************************************/
 document.getElementById("assignTaskForm").addEventListener("submit",(e)=>{
 
 e.preventDefault();
 
 const facultyUsername = facultySelect.value;
-
 const title = document.getElementById("taskTitle").value.trim();
-
 const desc = document.getElementById("taskDesc").value.trim();
-
 const deadline = document.getElementById("taskDeadline").value;
 
 const fileInput = document.getElementById("taskFile");
-
 const file = fileInput.files[0];
 
 if(!facultyUsername || !title || !desc || !deadline){
 
 alert("Please fill all fields");
-
 return;
 
 }
@@ -209,21 +274,13 @@ const saveTask = (fileData=null)=>{
 const newTask = {
 
 id: Date.now(),
-
 title,
-
 description: desc,
-
 deadline,
-
 assignedBy: loggedInUser.username,
-
 assignedTo: [facultyUsername],
-
 status: "Pending",
-
 file: fileData,
-
 createdAt: new Date().toLocaleString()
 
 };
@@ -232,11 +289,10 @@ tasks.push(newTask);
 
 saveTasks(tasks);
 
+alert("Task assigned to faculty");
+
 clearForm();
-
 toggleAssignSection(false);
-
-loadHodTasks();
 
 };
 
@@ -244,7 +300,7 @@ if(file){
 
 const reader = new FileReader();
 
-reader.onload = () => saveTask(reader.result);
+reader.onload = ()=> saveTask(reader.result);
 
 reader.readAsDataURL(file);
 
@@ -257,57 +313,40 @@ saveTask();
 });
 
 /************************************************
- 🧹 CLEAR FORM
+CLEAR FORM
 ************************************************/
 function clearForm(){
 
-document.getElementById("taskTitle").value = "";
-
-document.getElementById("taskDesc").value = "";
-
-document.getElementById("taskDeadline").value = "";
-
-document.getElementById("taskFile").value = "";
-
-facultySelect.value = "";
+document.getElementById("taskTitle").value="";
+document.getElementById("taskDesc").value="";
+document.getElementById("taskDeadline").value="";
+document.getElementById("taskFile").value="";
+facultySelect.value="";
 
 }
 
 /************************************************
- 👁 TOGGLE ASSIGN SECTION
+TOGGLE ASSIGN SECTION
 ************************************************/
 const assignSection = document.getElementById("assignTaskSection");
 
 document.getElementById("openAssignTask").addEventListener("click",()=>{
-
-toggleAssignSection(true);
-
+assignSection.classList.remove("hidden");
 });
 
 document.getElementById("cancelAssign").addEventListener("click",()=>{
-
-toggleAssignSection(false);
-
+assignSection.classList.add("hidden");
 });
 
-function toggleAssignSection(show){
-
-assignSection.classList.toggle("hidden", !show);
-
-}
-
 /************************************************
- 🚪 LOGOUT
+LOGOUT
 ************************************************/
 document.getElementById("logoutBtn").addEventListener("click",()=>{
-
 localStorage.removeItem("loggedInUser");
-
 window.location.href="../index.html";
-
 });
 
 /************************************************
- 🚀 INIT
+INIT
 ************************************************/
 loadHodTasks();

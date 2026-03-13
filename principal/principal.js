@@ -189,30 +189,30 @@ assignToSelect.selectedIndex=-1;
 ************************************************/
 function renderTasks(taskArray){
 
-const taskList=document.getElementById("taskList");
+const taskList = document.getElementById("taskList");
 
-taskList.innerHTML="";
+taskList.innerHTML = "";
 
-if(taskArray.length===0){
+if(taskArray.length === 0){
 
-taskList.innerHTML="<p class='text-gray-500'>No tasks found</p>";
+taskList.innerHTML = "<p class='text-gray-500'>No tasks found</p>";
 return;
 
 }
 
-taskArray.forEach(task=>{
+taskArray.forEach(task => {
 
-const div=document.createElement("div");
+const div = document.createElement("div");
 
-div.className="bg-white p-5 rounded-xl shadow";
+div.className = "bg-white p-5 rounded-xl shadow";
 
-div.innerHTML=`
+div.innerHTML = `
 
 <h3 class="text-lg font-semibold text-blue-700">${task.title}</h3>
 
 <p class="text-sm text-gray-600 mt-1">${task.description}</p>
 
-<div class="mt-2 text-sm">
+<div class="mt-2 text-sm space-y-1">
 
 <p><strong>Nature:</strong> ${task.nature}</p>
 
@@ -224,7 +224,41 @@ div.innerHTML=`
 
 <p><strong>Support:</strong> ${task.support || "-"}</p>
 
-${task.file ? `<a href="${task.file}" download class="text-blue-600 underline text-sm">Download Attachment</a>` : ""}
+${task.file ? `
+<a href="${task.file}" download
+class="text-blue-600 underline text-sm block">
+Download Task Attachment
+</a>
+` : ""}
+
+${task.hodReply ? `
+<p class="mt-2 text-sm">
+<strong>HOD Reply:</strong> ${task.hodReply}
+</p>
+` : ""}
+
+${task.hodFile ? `
+<a href="${task.hodFile}" download
+class="text-green-600 underline text-sm block">
+Download HOD Response
+</a>
+` : ""}
+
+</div>
+
+<div class="flex gap-3 mt-4">
+
+<button
+class="editTaskBtn bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+data-id="${task.id}">
+Edit
+</button>
+
+<button
+class="deleteTaskBtn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+data-id="${task.id}">
+Delete
+</button>
 
 </div>
 
@@ -235,6 +269,127 @@ taskList.appendChild(div);
 });
 
 }
+
+document.addEventListener("click", function(e){
+
+/************************************************
+ ✏ EDIT TASK
+************************************************/
+
+if(e.target.classList.contains("editTaskBtn")){
+
+const taskId = Number(e.target.dataset.id);
+
+const tasks = getTasks();
+
+const task = tasks.find(t => t.id === taskId);
+
+if(!task) return;
+
+const newTitle = prompt("Edit Title", task.title);
+
+const newDesc = prompt("Edit Description", task.description);
+
+const newDeadline = prompt("Edit Deadline", task.deadline);
+
+const newAssignedTo = prompt(
+"Edit Assigned Username (example: hod_cs or fac_cs1)",
+task.assignedTo.join(", ")
+);
+
+const newSupport = prompt(
+"Edit Support People",
+task.support || ""
+);
+
+if(newTitle) task.title = newTitle;
+
+if(newDesc) task.description = newDesc;
+
+if(newDeadline) task.deadline = newDeadline;
+
+if(newAssignedTo){
+
+task.assignedTo = newAssignedTo
+.split(",")
+.map(u => u.trim());
+
+}
+
+task.support = newSupport;
+
+saveTasks(tasks);
+
+renderTasks(tasks);
+
+loadHodPerformance();
+
+loadFacultyPerformance();
+
+}
+
+/************************************************
+ 🗑 DELETE TASK
+************************************************/
+
+if(e.target.classList.contains("deleteTaskBtn")){
+
+const taskId = Number(e.target.dataset.id);
+
+if(!confirm("Are you sure you want to delete this task?")) return;
+
+let tasks = getTasks();
+
+tasks = tasks.filter(t => t.id !== taskId);
+
+saveTasks(tasks);
+
+renderTasks(tasks);
+
+loadHodPerformance();
+
+loadFacultyPerformance();
+
+}
+
+});
+
+
+function applyFilters(){
+
+const keyword =
+document.getElementById("searchTask").value.toLowerCase();
+
+const status =
+document.getElementById("filterStatus").value;
+
+let tasks = getTasks();
+
+if(keyword){
+
+tasks = tasks.filter(t =>
+t.title.toLowerCase().includes(keyword) ||
+t.description.toLowerCase().includes(keyword)
+);
+
+}
+
+if(status){
+
+tasks = tasks.filter(t => t.status === status);
+
+}
+
+renderTasks(tasks);
+
+}
+
+document.getElementById("searchTask")
+.addEventListener("input", applyFilters);
+
+document.getElementById("filterStatus")
+.addEventListener("change", applyFilters);
+
 
 /************************************************
  📊 HOD PERFORMANCE
